@@ -1,0 +1,63 @@
+package fungsi
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"math"
+	"math/big"
+	"regexp"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
+)
+
+var (
+	walletAddress common.Address
+	client        *ethclient.Client
+	err           error
+)
+
+func fungsi() {
+	userWallet := "0x29a8b660971a4668d1a15992E441f4723398aE2d"
+	if !isValidAddress(userWallet) {
+		log.Fatal("Address is not valid: ", err)
+	}
+
+	walletAddress = common.HexToAddress("0x29a8b660971a4668d1a15992E441f4723398aE2d")
+	fmt.Println(walletAddress.Hex())
+	client, err = ethclient.Dial("HTTP://127.0.0.1:7545")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Wei: %s\n", getWeiBalance())
+	fmt.Printf("Eth: %v\n", weiToEth(getWeiBalance()))
+}
+
+func getWeiBalance() *big.Int {
+	balance, err := client.BalanceAt(context.Background(), walletAddress, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return balance
+}
+
+func weiToEth(num *big.Int) *big.Float {
+	fbalance := new(big.Float)
+	fbalance.SetString(num.String())
+	return new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
+}
+
+func isValidAddress(address string) bool {
+	re := regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
+	return re.MatchString(address)
+}
+
+func isContractAddress(address string) bool {
+	addr := common.HexToAddress(address)
+	bytecode, err := client.CodeAt(context.Background(), addr, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return len(bytecode) > 0
+}
