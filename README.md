@@ -6,4 +6,4 @@ This project demonstrates how to connect a blockchain to the internet using an O
 
 In this project, we showcase a simple implementation of a blockchain Oracle that fetches the live price of a token. Oracles are essential for smart contracts as they provide external data to the blockchain.
 
-[![DEMO VIDEO]](https://raw.githubusercontent.com/azams/goracle/master/demo.webm)
+[DEMO VIDEO](https://raw.githubusercontent.com/azams/goracle/master/demo.webm)
